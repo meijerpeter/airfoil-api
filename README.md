@@ -4,14 +4,24 @@ Wrap Airfoil's Applescript interface with a JSON API.
 
 ### Setup
 
-Then:
+1. Install NodeJS
+2. Open Terminal and then:
 
-    npm install -g jnewland/airfoil-api
-    npm run start or node /usr/local/lib/node_modules/airfoil-api/app.js
+`npm install -g jnewland/airfoil-api`
+    
+This installs the NodeJS module globally in `/usr/local/lib/node_modules/airfoil-api/` on your Mac.
+
+3. To run the application, type:
+
+`npm run start`
+    
+or:
+ 
+`node /usr/local/lib/node_modules/airfoil-api/app.js`
 
 ### Installation
 
-Usage of the Mac's LaunchAgent is recommended to keep the NodeJS server running. Create the following file in a text editor of choice and place it in ~/Library/LaunchAgents and name it: "com.jnewland.airfoilapi.plist". 
+Usage of the Mac's LaunchAgent is recommended to keep the NodeJS server running. Create the following file in a text editor of choice and place it in `~/Library/LaunchAgents` and name it: `com.jnewland.airfoilapi.plist`. 
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -30,6 +40,8 @@ Usage of the Mac's LaunchAgent is recommended to keep the NodeJS server running.
 </dict>
 </plist>
 ```
+
+With every reboot or new login the NodeJS server will start the `airfoil-api` application
 
 ### Usage
 
