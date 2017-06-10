@@ -46,13 +46,51 @@ app.get('/speakers', function(req, res){
 
 });
 
+app.get('/speakers/:id/status', function (req, res) {
+  var script = "tell application \"Airfoil\"\n";
+  script += "set myspeakers to get every speaker\n";
+  script += "set speakerStatus to false\n";
+  script += "set spkStatus to 0\n";
+  script += "set thisSpeaker to \"" + req.params.id + "\"\n";
+  script += "repeat with currentSpeaker in myspeakers\n";
+  script += "if thisSpeaker is equal to name of currentSpeaker then set speakerStatus to connected of currentSpeaker\n";
+  script += "end repeat\n";
+  script += "if speakerStatus is true then set spkStatus to 1\n";
+  script += "get spkStatus\n";
+  script += "end tell";
+  
+  applescript.execString(script, function(error, result) {
+    if (error) {
+      res.json({error: error});
+    } else {
+      res.send("" + result);
+    }
+  });
+});
+
+app.get('/speakers/:id/volume', function (req, res) {
+  var script = "tell application \"Airfoil\"\n";
+  script += "set myspeakers to get every speaker\n";
+  script += "set speakerVolume to 1\n";
+  script += "set thisSpeaker to \"" + req.params.id + "\"\n";
+  script += "repeat with currentSpeaker in myspeakers\n";
+  script += "if thisSpeaker is equal to name of currentSpeaker then set speakerVolume to volume of currentSpeaker\n";
+  script += "end repeat\n";
+  script += "get round(speakerVolume * 100)\n";
+  script += "end tell";
+  
+  applescript.execString(script, function(error, result) {
+    if (error) {
+      res.json({error: error});
+    } else {
+      res.send("" + result);
+    }
+  });
+});
+
 app.post('/speakers/:id/connect', function (req, res) {
   var script = "tell application \"Airfoil\"\n";
-  script += "set myspeaker to first speaker whose id is \"" + req.params.id + "\"\n";
-  script += "connect to myspeaker\n";
-  script += "delay 0.5\n";
-  script += "connect to myspeaker\n";
-  script += "delay 0.5\n";
+  script += "set myspeaker to first speaker whose name is \"" + req.params.id + "\"\n";
   script += "connect to myspeaker\n";
   script += "delay 0.5\n";
   script += "connected of myspeaker\n";
@@ -68,7 +106,7 @@ app.post('/speakers/:id/connect', function (req, res) {
 
 app.post('/speakers/:id/disconnect', function (req, res) {
   var script = "tell application \"Airfoil\"\n";
-  script += "set myspeaker to first speaker whose id is \"" + req.params.id + "\"\n";
+  script += "set myspeaker to first speaker whose name is \"" + req.params.id + "\"\n";
   script += "disconnect from myspeaker\n";
   script += "connected of myspeaker\n";
   script += "end tell";
@@ -81,10 +119,10 @@ app.post('/speakers/:id/disconnect', function (req, res) {
   });
 });
 
-app.post('/speakers/:id/volume', bodyParser.text({type: '*/*'}), function (req, res) {
+app.post('/speakers/:id/volume/:volume', function (req, res) {
   var script = "tell application \"Airfoil\"\n";
-  script += "set myspeaker to first speaker whose id is \"" + req.params.id + "\"\n";
-  script += "set (volume of myspeaker) to " + parseFloat(req.body) + "\n";
+  script += "set myspeaker to first speaker whose name is \"" + req.params.id + "\"\n";
+  script += "set (volume of myspeaker) to " + parseFloat(req.params.volume)*0.01 + "\n";
   script += "volume of myspeaker\n";
   script += "end tell";
   applescript.execString(script, function(error, result) {
