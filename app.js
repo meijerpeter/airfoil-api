@@ -134,4 +134,19 @@ app.post('/speakers/:id/volume/:volume', function (req, res) {
   });
 });
 
+app.post('/speakers/:id/volume', bodyParser.text({type: '*/*'}), function (req, res) {
+  var script = "tell application \"Airfoil\"\n";
+  script += "set myspeaker to first speaker whose id is \"" + req.params.id + "\"\n";
+  script += "set (volume of myspeaker) to " + parseFloat(req.body) + "\n";
+  script += "volume of myspeaker\n";
+  script += "end tell";
+  applescript.execString(script, function(error, result) {
+    if (error) {
+      res.json({error: error});
+    } else {
+      res.json({id: req.params.id, volume: parseFloat(result)})
+    }
+  });
+});
+
 app.listen(process.env.PORT || 8080);
